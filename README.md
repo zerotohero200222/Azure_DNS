@@ -18,24 +18,6 @@ This project automates the provisioning of an **Azure DNS Zone** and **A Record*
   - TTL is configurable (default: 3600 seconds).
 
 ---
-
-## 📁 Project Structure
-
-```
-
-.
-├── main.tf                     # Terraform resource definitions
-├── providers.tf                # Provider and Terraform version
-├── variables.tf                # Input variables
-├── outputs.tf                  # Output values
-└── .github/
-└── workflows/
-└── terraform-deploy.yml  # GitHub Actions CI/CD pipeline
-
-````
-
----
-
 ## ⚙️ Prerequisites
 
 - Azure Subscription
