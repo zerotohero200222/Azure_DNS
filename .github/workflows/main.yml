@@ -1,0 +1,38 @@
+name: Terraform Plan with Cost Estimation
+
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform Init
+        run: terraform init -backend-config="resource_group_name=${{ secrets.BACKEND_RESOURCE_GROUP }}" \
+                            -backend-config="storage_account_name=${{ secrets.BACKEND_STORAGE_ACCOUNT }}" \
+                            -backend-config="container_name=${{ secrets.BACKEND_CONTAINER_NAME }}" \
+                            -backend-config="key=dev/terraform.tfstate"
+
+      - name: Terraform Plan
+        run: terraform plan -var-file="terraform.tfvars" -out=tfplan
+
+      - name: Terraform Show
+        run: terraform show -no-color tfplan
+
+      - name: DNS Cost Estimate (Static)
+        run: |
+          echo "💰 Estimated DNS Cost ~ ₹0.50/mo"
