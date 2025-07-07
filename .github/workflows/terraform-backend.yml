@@ -24,6 +24,6 @@ jobs:
 
       - name: Create storage account and container
         run: |
-          az group create --name tfstate-rg --location eastus2
+          az group create --name tfstate-rg101 --location eastus2
           az storage account create --name tfstate123dev --resource-group tfstate-rg --sku Standard_LRS
           az storage container create --name tfstate --account-name tfstate123dev
