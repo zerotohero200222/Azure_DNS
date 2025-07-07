@@ -6,6 +6,6 @@ output "dns_zone_name" {
   value = azurerm_dns_zone.zone.name
 }
 
-output "name_servers" {
+output "dns_name_servers" {
   value = azurerm_dns_zone.zone.name_servers
 }
