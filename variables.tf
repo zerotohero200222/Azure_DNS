@@ -1,29 +1,30 @@
+variable "env" {
+  type        = string
+  description = "Environment name (e.g., dev, test, prod)."
+}
+
 variable "resource_group_location" {
   type        = string
-  default     = "eastus"
   description = "Location for all resources."
 }
 
 variable "resource_group_name_prefix" {
   type        = string
-  default     = "rg"
-  description = "Prefix of the resource group name that's combined with a random value so name is unique in your Azure subscription."
+  description = "Prefix for the resource group name."
 }
 
 variable "dns_zone_name" {
   type        = string
   default     = null
-  description = "Name of the DNS zone."
+  description = "Optional DNS zone name."
 }
 
 variable "dns_ttl" {
   type        = number
-  default     = 3600
-  description = "Time To Live (TTL) of the DNS record (in seconds)."
+  description = "Time To Live (TTL) for the DNS record."
 }
 
 variable "dns_records" {
   type        = list(string)
-  default     = ["1.2.3.4", "1.2.3.5"]
-  description = "List of IPv4 addresses."
+  description = "List of IP addresses for the A record."
 }
