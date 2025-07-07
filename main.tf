@@ -10,20 +10,18 @@ resource "azurerm_resource_group" "rg" {
   }
 }
 
-resource "random_string" "azurerm_dns_zone_name" {
-  length  = 13
-  lower   = true
+resource "random_string" "zone" {
+  length  = 10
+  upper   = false
   numeric = false
   special = false
-  upper   = false
 }
 
 resource "azurerm_dns_zone" "zone" {
-  name = (
-    var.dns_zone_name != null ?
-    var.dns_zone_name :
-    "www.${random_string.azurerm_dns_zone_name.result}.${var.env}.azurequickstart.org"
-  )
+  name = var.dns_zone_name != null ?
+         var.dns_zone_name :
+         "www.${random_string.zone.result}.${var.env}.example.org"
+
   resource_group_name = azurerm_resource_group.rg.name
   tags = {
     environment = var.env
@@ -32,10 +30,11 @@ resource "azurerm_dns_zone" "zone" {
 
 resource "azurerm_dns_a_record" "record" {
   name                = "www"
-  resource_group_name = azurerm_resource_group.rg.name
   zone_name           = azurerm_dns_zone.zone.name
+  resource_group_name = azurerm_resource_group.rg.name
   ttl                 = var.dns_ttl
   records             = var.dns_records
+
   tags = {
     environment = var.env
   }
