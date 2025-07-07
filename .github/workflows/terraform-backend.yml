@@ -1,0 +1,29 @@
+name: Terraform Backend Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-backend:
+    runs-on: ubuntu-latest
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create storage account and container
+        run: |
+          az group create --name tfstate-rg --location eastus2
+          az storage account create --name tfstate123dev --resource-group tfstate-rg --sku Standard_LRS
+          az storage container create --name tfstate --account-name tfstate123dev
