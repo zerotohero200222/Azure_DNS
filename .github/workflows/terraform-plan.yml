@@ -1,23 +1,23 @@
-name: Terraform Plan with Cost Estimation (Azure)
+name: Terraform Plan with Cost Estimation
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
+env:
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
 jobs:
-  terraform:
+  terraform-plan:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
 
-    env:
-      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Terraform
@@ -26,19 +26,24 @@ jobs:
           terraform_version: 1.6.6
 
       - name: Terraform Init
-        run: terraform init -backend-config="resource_group_name=${{ secrets.BACKEND_RESOURCE_GROUP }}" \
-                            -backend-config="storage_account_name=${{ secrets.BACKEND_STORAGE_ACCOUNT }}" \
-                            -backend-config="container_name=${{ secrets.BACKEND_CONTAINER_NAME }}" \
-                            -backend-config="key=dev/terraform.tfstate"
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=${{ secrets.BACKEND_RESOURCE_GROUP }}" \
+            -backend-config="storage_account_name=${{ secrets.BACKEND_STORAGE_ACCOUNT }}" \
+            -backend-config="container_name=${{ secrets.BACKEND_CONTAINER_NAME }}" \
+            -backend-config="key=dev/terraform.tfstate"
 
       - name: Terraform Plan
-        run: terraform plan -var-file="terraform.tfvars"
+        run: terraform plan -var-file="terraform.tfvars" -out=tfplan
 
-      - name: Print Estimated Cost for Azure DNS (Static Summary)
+      - name: Terraform Show
+        run: terraform show -no-color tfplan
+
+      - name: Append Estimated Cost for DNS (Static Comment)
         run: |
-          echo "### 💰 Estimated Azure DNS Cost Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **DNS Zone (Public):** ~ ₹0.50 per zone/month" >> $GITHUB_STEP_SUMMARY
-          echo "- **DNS A Record:** Free (included in zone)" >> $GITHUB_STEP_SUMMARY
-          echo "- Use Azure Cost Calculator for exact pricing if needed" >> $GITHUB_STEP_SUMMARY
+          echo "### 💰 Estimated Monthly Cost (Example)" >> $GITHUB_STEP_SUMMARY
+          echo "- Azure DNS Zone: ~ ₹0.50 / month" >> $GITHUB_STEP_SUMMARY
+          echo "- A records: Free (under standard usage)" >> $GITHUB_STEP_SUMMARY
+
 
 
