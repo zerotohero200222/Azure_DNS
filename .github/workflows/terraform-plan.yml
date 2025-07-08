@@ -30,11 +30,11 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -var-file="terraform.tfvars" -out=tfplan
 
-      - name: Terraform Show (with Cost Comment)
-        run: |
-          terraform show -no-color tfplan
-          echo ""
-          echo "# Estimated Monthly DNS Cost (Static)"
-          echo "# DNS Zone (Azure Public): ~ ₹0.50 / month"
-          echo "# DNS A Record: Free (Azure includes basic usage)"
+      - name: Terraform Show
+        run: terraform show -no-color tfplan
+
+      # 💰 Estimated DNS Cost:
+      # DNS Zone (Azure Public): ~ ₹0.50 / month
+      # DNS A Record: Free (Azure includes basic usage)
+
 
