@@ -27,11 +27,11 @@ jobs:
 
       - name: Terraform Init
         run: |
-          terraform init \
-            -backend-config="resource_group_name=${{ secrets.BACKEND_RESOURCE_GROUP }}" \
-            -backend-config="storage_account_name=${{ secrets.BACKEND_STORAGE_ACCOUNT }}" \
-            -backend-config="container_name=${{ secrets.BACKEND_CONTAINER_NAME }}" \
-            -backend-config="key=dev/terraform.tfstate"
+         terraform init \
+             -backend-config="resource_group_name=${{ secrets.BACKEND_RESOURCE_GROUP }}" \
+             -backend-config="storage_account_name=${{ secrets.BACKEND_STORAGE_ACCOUNT }}" \
+             -backend-config="container_name=${{ secrets.BACKEND_CONTAINER_NAME }}" \
+             -backend-config="key=dev/terraform.tfstate"
 
       - name: Terraform Plan
         run: terraform plan -var-file="terraform.tfvars" -out=tfplan
